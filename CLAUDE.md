@@ -30,9 +30,10 @@
 - `preguntar_documento.py` responde preguntas sobre `documentos/cafeteria.txt` (documento completo en el prompt, sin ChromaDB todavía). Probado: responde lo que está y dice "no tengo esa información" cuando no está.
 - `chromadb` 1.5.9 instalado. `probar_chroma.py` hace búsqueda semántica (sin Claude): fragmentos por párrafo, `PersistentClient` en `chroma_db/` (en `.gitignore`), modelo por defecto `all-MiniLM-L6-v2`. Resultado: encuentra el párrafo correcto en 3 de 4 preguntas, pero con distancias altas (~1.0–1.3), y para "¿cuánto cuesta un latte?" pone el título del documento antes que el menú → el modelo es débil en español.
 - `docubot.py`: RAG completo. Chroma recupera los 2 fragmentos más parecidos y Claude responde solo con ellos. Probado: "¿tienes tacos?" → dice que no aparecen en el menú; latte → $55; transferencia → no se acepta.
+- Todo subido a GitHub (commit `14f3614`). Respaldo del contexto en Google Drive: documento "DocuBot - Contexto del proyecto".
 - Siguiente:
-  1. Cambiar a un modelo de embeddings multilingüe y comparar distancias.
-  2. Commit y push de `.gitignore`, `CLAUDE.md`, `probar_chroma.py`, `docubot.py`.
+  1. Cambiar a un modelo de embeddings multilingüe y comparar distancias con `probar_chroma.py`.
+  2. Varios documentos en `documentos/` (no solo cafeteria.txt).
 
 ## Bitácora
 Al terminar cada avance importante, actualizar "Estado actual" y agregar una línea aquí con fecha y lo que hicimos.
@@ -44,3 +45,4 @@ Al terminar cada avance importante, actualizar "Estado actual" y agregar una lí
 - 2026-10-27: Instalado ChromaDB; primera búsqueda semántica con `probar_chroma.py`. Detectado que el modelo de embeddings por defecto es flojo en español.
 - 2026-10-27: Primer RAG completo (`docubot.py`): Chroma recupera y Claude genera la respuesta.
 - 2026-10-27: Arreglado `AttributeError: 'ThinkingBlock'` en los 3 scripts (leer solo bloques de texto, effort low, max_tokens 1000).
+- 2026-10-27: Commit y push del RAG completo (`14f3614`). Respaldo del contexto en Google Drive.
