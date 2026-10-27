@@ -1,0 +1,16 @@
+CAFÉ LA ESQUINA - Información para clientes
+
+Horario: lunes a viernes de 7:00 a 20:00, sábados de 8:00 a 14:00. Domingos cerrado.
+Dirección: Av. Juárez 123, Col. Centro, Guadalajara.
+
+Menú:
+- Café americano: $35
+- Capuchino: $48
+- Latte de vainilla: $55
+- Chilaquiles verdes: $95
+- Molletes: $70
+
+Pagos: efectivo, tarjeta de débito y crédito. No aceptamos transferencias.
+Wifi gratis para clientes. Contraseña: se pide en caja.
+Envíos a domicilio por Rappi y Uber Eats, radio máximo de 3 km.
+Pedidos para eventos: con 48 horas de anticipación al 33-1234-5678.

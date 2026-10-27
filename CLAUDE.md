@@ -25,13 +25,16 @@
 - Interfaz y despliegue: opciones gratuitas (por definir cuando lleguemos).
 
 ## Estado actual
-- Hecho: carpeta del proyecto, `.venv`, `anthropic` y `python-dotenv` instalados, `.env` con la key, `.gitignore` (`.env`, `.venv/`, `__pycache__/`), `hola_claude.py` creado, Git instalado y configurado, `CLAUDE.md` creado, `hola_claude.py` corrido con éxito (la API responde).
+- Hecho: carpeta del proyecto, `.venv`, `anthropic` y `python-dotenv` instalados, `.env` con la key, `.gitignore` (`.env`, `.venv/`, `__pycache__/`), `hola_claude.py` creado, Git instalado y configurado, `CLAUDE.md` creado, `hola_claude.py` corrido con éxito (la API responde), repo público en https://github.com/kalebtf/docubot (rama `main`, `.env` verificado fuera).
+- `preguntar_documento.py` responde preguntas sobre `documentos/cafeteria.txt` (documento completo en el prompt, sin ChromaDB todavía). Probado: responde lo que está y dice "no tengo esa información" cuando no está.
 - Siguiente:
-  1. Crear repo público "docubot" en GitHub y hacer el primer commit y push, verificando que `.env` NO se suba.
-  2. Que DocuBot lea su primer documento.
+  1. Commit y push de `documentos/`, `preguntar_documento.py` y `CLAUDE.md` actualizado.
+  2. Pasar a RAG real: varios documentos, dividirlos en fragmentos (chunks) y buscarlos con ChromaDB.
 
 ## Bitácora
 Al terminar cada avance importante, actualizar "Estado actual" y agregar una línea aquí con fecha y lo que hicimos.
 
 - 2026-10-27: Creado `CLAUDE.md` con el contexto del proyecto.
 - 2026-10-27: Primera llamada exitosa a la API de Claude con `hola_claude.py`.
+- 2026-10-27: Repo público `kalebtf/docubot` creado con `gh`, primer commit y push.
+- 2026-10-27: DocuBot lee su primer documento (`preguntar_documento.py` + `documentos/cafeteria.txt`) y no inventa respuestas.
