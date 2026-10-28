@@ -9,6 +9,7 @@
 - Aprender haciendo: construimos cosas reales, en pasos pequeños, uno a la vez.
 - Cada vez que instalemos, creemos o corramos algo, explícame en 1–3 frases QUÉ es y PARA QUÉ sirve, comparándolo con Java cuando ayude.
 - Desde 2026-10-27: Claude implementa y corre los pasos directamente; al terminar me dice qué implementó (qué comandos corrió y qué hizo) y qué tengo que probar yo. Quiero entender el código, así que la explicación breve se mantiene.
+- En cada respuesta explícame con palabras simples: 1) qué hicimos, 2) para qué sirve en el proyecto y en el trabajo real de un AI Engineer, 3) los conceptos nuevos, y 4) el siguiente paso según el plan.
 - Nunca muestres, imprimas ni subas el contenido de `.env` (tiene mi API key).
 
 ## El plan (12 meses)
