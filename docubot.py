@@ -20,13 +20,34 @@ def leer_documento(ruta):
     return ruta.read_text(encoding="utf-8")
 
 
+def es_titulo(linea):
+    """Una línea corta que no termina como oración ("EVENTOS Y CATERING - Café...", "Menú:")."""
+    return 0 < len(linea) <= 80 and not linea.endswith((".", "?", "!"))
+
+
+def separar_titulo(texto):
+    """Devuelve (título del documento, resto del texto). El título es la primera línea,
+    si parece título; si no, el documento no tiene título."""
+    lineas = texto.strip().splitlines()
+    if lineas and es_titulo(lineas[0].strip()):
+        return lineas[0].strip(), "\n".join(lineas[1:])
+    return "", texto
+
+
 def dividir_en_fragmentos(texto, max_caracteres=300):
     """Corta por párrafo; si un párrafo es muy largo (pasa en PDFs, que pierden las
     líneas en blanco), lo parte por líneas repitiendo la última línea en el siguiente
-    fragmento (traslape), para que una idea cortada a la mitad no pierda contexto."""
+    fragmento (traslape), para que una idea cortada a la mitad no pierda contexto.
+    Un párrafo que es solo un título no queda solo: se une al párrafo que sigue."""
     fragmentos = []
+    titulo_pendiente = []
     for parrafo in texto.split("\n\n"):
         lineas = [linea.strip() for linea in parrafo.splitlines() if linea.strip()]
+        if len(lineas) == 1 and es_titulo(lineas[0]):
+            titulo_pendiente.append(lineas[0])  # esperar al siguiente párrafo
+            continue
+        lineas = titulo_pendiente + lineas
+        titulo_pendiente = []
         actual = []
         for linea in lineas:
             if actual and len("\n".join(actual + [linea])) > max_caracteres:
@@ -35,6 +56,8 @@ def dividir_en_fragmentos(texto, max_caracteres=300):
             actual.append(linea)
         if actual:
             fragmentos.append("\n".join(actual))
+    if titulo_pendiente:  # un título al final, sin texto después: se guarda tal cual
+        fragmentos.append("\n".join(titulo_pendiente))
     return fragmentos
 
 
@@ -61,7 +84,11 @@ def indexar_documento(ruta):
     """Lee, divide y guarda un documento en Chroma. Devuelve cuántos fragmentos guardó."""
     # Si el archivo ya estaba (lo están reemplazando), quitar sus fragmentos viejos
     coleccion.delete(where={"archivo": ruta.name})
-    fragmentos = dividir_en_fragmentos(leer_documento(ruta))
+    titulo, cuerpo = separar_titulo(leer_documento(ruta))
+    # Cada fragmento lleva al inicio de qué documento viene, para no perder el contexto:
+    # "Paquete de desayuno..." solo no dice que es de eventos; con el encabezado, sí
+    encabezado = f"[{ruta.name} — {titulo}]" if titulo else f"[{ruta.name}]"
+    fragmentos = [f"{encabezado}\n{fragmento}" for fragmento in dividir_en_fragmentos(cuerpo)]
     if fragmentos:  # un PDF escaneado (solo imagen) no trae texto
         coleccion.add(
             documents=fragmentos,
