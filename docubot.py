@@ -1,4 +1,6 @@
 import os
+import re
+import unicodedata
 from pathlib import Path
 import chromadb
 from chromadb.errors import NotFoundError
@@ -106,16 +108,60 @@ for nombre in listar_documentos():
     indexar_documento(CARPETA_DOCUMENTOS / nombre)
 
 
+# Palabras tan comunes que no sirven para buscar por palabra exacta (sin acentos)
+PALABRAS_VACIAS = {
+    "que", "cual", "cuales", "como", "cuando", "donde", "cuanto", "cuanta", "cuantos", "cuantas",
+    "tienen", "tiene", "tienes", "hay", "puedo", "pueden", "puede", "dan", "hacen", "son", "una",
+    "uno", "unos", "unas", "los", "las", "del", "con", "sin", "por", "para", "mas", "mis", "sus",
+    "cuesta", "cuestan", "algun", "alguna", "esta", "este", "estan", "ustedes",
+}
+
+
+def normalizar(texto):
+    """Minúsculas y sin acentos: "Sábado" y "sabado" cuentan como la misma palabra."""
+    sin_acentos = unicodedata.normalize("NFD", texto.lower())
+    return "".join(c for c in sin_acentos if unicodedata.category(c) != "Mn")
+
+
+def palabras_clave(texto):
+    return {p for p in re.findall(r"\w+", normalizar(texto)) if len(p) >= 3 and p not in PALABRAS_VACIAS}
+
+
+def buscar(pregunta, cuantos=5):
+    """Búsqueda híbrida: combina búsqueda por significado (embeddings) y por palabra exacta.
+    Los embeddings fallan con nombres concretos en listas: "¿cuánto cuesta un latte?"
+    dejaba el menú en 6º lugar, aunque es el único fragmento que dice "Latte"."""
+    total = coleccion.count()
+    if total == 0:
+        return []
+    # Ranking 1, por significado: los más parecidos según el modelo de embeddings
+    semantico = coleccion.query(query_texts=[pregunta], n_results=min(20, total))["ids"][0]
+    # Ranking 2, por palabra: cuántas palabras clave de la pregunta aparecen en el fragmento.
+    # Se ignora la 1ª línea (el encabezado [archivo — título]), que se repite en todos.
+    # Leer todos los fragmentos sirve con pocos documentos; con miles se usaría un índice (BM25)
+    todos = coleccion.get()
+    claves = palabras_clave(pregunta)
+    coincidencias = {
+        id_: sum(clave in normalizar(doc.split("\n", 1)[-1]) for clave in claves)
+        for id_, doc in zip(todos["ids"], todos["documents"])
+    }
+    por_palabra = sorted((i for i in coincidencias if coincidencias[i]), key=lambda i: -coincidencias[i])
+    # Fusión de rankings recíproca (RRF): cada ranking da 1/(60 + lugar) puntos.
+    # Quedar arriba en cualquiera de los dos ayuda; quedar arriba en ambos, más.
+    puntos = {}
+    for ranking in (semantico, por_palabra):
+        for lugar, id_ in enumerate(ranking, start=1):
+            puntos[id_] = puntos.get(id_, 0) + 1 / (60 + lugar)
+    mejores = sorted(puntos, key=lambda i: -puntos[i])[:cuantos]
+    datos = dict(zip(todos["ids"], zip(todos["metadatas"], todos["documents"])))
+    return [(datos[i][0]["archivo"], datos[i][1]) for i in mejores]
+
+
 def responder(pregunta):
     """Devuelve (respuesta de Claude, lista de (archivo, fragmento) usados)."""
-    # 1. Recuperar: buscar los fragmentos más parecidos a la pregunta, en todos los documentos
-    # 5 y no menos: con varios documentos el fragmento correcto a veces queda en 4º lugar
-    # (p. ej. "¿cuánto cuesta un latte?" → el menú). Mandar unos pocos de más es barato.
-    resultados = coleccion.query(query_texts=[pregunta], n_results=5)
-    fuentes = [
-        (metadatos["archivo"], fragmento)
-        for fragmento, metadatos in zip(resultados["documents"][0], resultados["metadatas"][0])
-    ]
+    # 1. Recuperar: los 5 fragmentos más relevantes, en todos los documentos.
+    # Mandar unos pocos de más es barato y evita que el correcto quede fuera.
+    fuentes = buscar(pregunta)
     contexto = "\n\n".join(
         f'<fragmento archivo="{archivo}">\n{fragmento}\n</fragmento>' for archivo, fragmento in fuentes
     )
