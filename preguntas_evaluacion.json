@@ -1,0 +1,52 @@
+[
+  {
+    "pregunta": "¿Hacen catering para eventos?",
+    "debe_incluir": [["$150"], ["$380"], ["1,500"], ["50%"]],
+    "fragmentos": ["Paquete de desayuno", "Paquete de café para oficinas", "Renta del local", "Anticipo"]
+  },
+  {
+    "pregunta": "¿Cuánto cuesta un latee?",
+    "debe_incluir": [["$55"]],
+    "fragmentos": ["Latte de vainilla"]
+  },
+  {
+    "pregunta": "¿Puedo llevar a mi perro?",
+    "debe_incluir": [["terraza"], ["asistencia"]],
+    "fragmentos": ["mascota"]
+  },
+  {
+    "pregunta": "¿Venden pastel de chocolate?",
+    "debe_incluir": [["no tengo", "no cuento con", "no aparece", "no encuentro", "no hay informacion", "no se menciona"]],
+    "fragmentos": []
+  },
+  {
+    "pregunta": "¿A qué hora abren el sábado?",
+    "debe_incluir": [["8:00"], ["14:00"]],
+    "fragmentos": ["Horario"]
+  },
+  {
+    "pregunta": "¿Puedo pedir la factura de una compra del mes pasado?",
+    "debe_incluir": [["no se emiten", "no es posible", "no se pueden", "no puedes", "no puede", "no se puede"], ["mismo dia"]],
+    "fragmentos": ["Dan factura"]
+  },
+  {
+    "pregunta": "¿Hay alguna promoción en la tarde?",
+    "debe_incluir": [["17:00", "5:00 p", "5 pm"], ["mitad de precio"]],
+    "fragmentos": ["Happy hour"]
+  },
+  {
+    "pregunta": "¿Aceptan pago por transferencia?",
+    "debe_incluir": [["no aceptamos", "no se acepta", "no aceptan", "no es posible", "no se aceptan"]],
+    "fragmentos": ["No aceptamos transferencias"]
+  },
+  {
+    "pregunta": "¿Cuánto cuesta el desayuno del día?",
+    "debe_incluir": [["$115"], ["chilaquiles"]],
+    "fragmentos": ["Desayuno del día"]
+  },
+  {
+    "pregunta": "¿Tienen leche de avena y cuánto cuesta?",
+    "debe_incluir": [["$10"], ["avena"]],
+    "fragmentos": ["leche de avena"]
+  }
+]
