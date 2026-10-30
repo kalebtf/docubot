@@ -48,5 +48,35 @@
     "pregunta": "¿Tienen leche de avena y cuánto cuesta?",
     "debe_incluir": [["$10"], ["avena"]],
     "fragmentos": ["leche de avena"]
+  },
+  {
+    "pregunta": "¿Cuánto cuesta un café americano?",
+    "debe_incluir": [["$35"]],
+    "fragmentos": ["Café americano: $35"]
+  },
+  {
+    "pregunta": "¿Abren los domingos?",
+    "debe_incluir": [["cerrado", "no abrimos", "no abren", "no se abre", "no hay servicio"]],
+    "fragmentos": ["Domingos cerrado"]
+  },
+  {
+    "pregunta": "¿Se puede reservar una mesa?",
+    "debe_incluir": [["6 o mas", "seis o mas", "6 personas"], ["un dia de anticipacion", "1 dia de anticipacion"]],
+    "fragmentos": ["reservaciones para grupos"]
+  },
+  {
+    "pregunta": "¿Cómo funciona la tarjeta de lealtad?",
+    "debe_incluir": [["decimo", "10"], ["gratis"]],
+    "fragmentos": ["Tarjeta de lealtad"]
+  },
+  {
+    "pregunta": "¿Hay estacionamiento?",
+    "debe_incluir": [["no contamos", "no cuenta", "no tenemos", "no hay estacionamiento propio", "no tiene"], ["media cuadra"]],
+    "fragmentos": ["estacionamiento propio"]
+  },
+  {
+    "pregunta": "¿Tienen sucursal en Monterrey?",
+    "debe_incluir": [["no tengo", "no cuento con", "no aparece", "no encuentro", "no hay informacion", "no se menciona", "no se especifica", "no se indica"]],
+    "fragmentos": []
   }
 ]

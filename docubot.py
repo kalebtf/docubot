@@ -137,14 +137,20 @@ def buscar(pregunta, cuantos=5):
     # Ranking 1, por significado: los más parecidos según el modelo de embeddings
     semantico = coleccion.query(query_texts=[pregunta], n_results=min(20, total))["ids"][0]
     # Ranking 2, por palabra: cuántas palabras clave de la pregunta aparecen en el fragmento.
-    # Se ignora la 1ª línea (el encabezado [archivo — título]), que se repite en todos.
+    # Cuenta también el encabezado [archivo — título] (así "catering" encuentra todo el
+    # documento de eventos), pero NO las palabras que están en el encabezado de TODOS los
+    # fragmentos ("café", "esquina": el nombre del negocio), porque no distinguen nada.
     # Leer todos los fragmentos sirve con pocos documentos; con miles se usaría un índice (BM25)
     todos = coleccion.get()
     claves = palabras_clave(pregunta)
-    coincidencias = {
-        id_: sum(clave in normalizar(doc.split("\n", 1)[-1]) for clave in claves)
-        for id_, doc in zip(todos["ids"], todos["documents"])
-    }
+    partes = [normalizar(doc).split("\n", 1) for doc in todos["documents"]]  # [encabezado, cuerpo]
+    en_todos_los_encabezados = {c for c in claves if all(c in encabezado for encabezado, *_ in partes)}
+    coincidencias = {}
+    for id_, (encabezado, *resto) in zip(todos["ids"], partes):
+        cuerpo = resto[0] if resto else ""
+        coincidencias[id_] = sum(
+            c in cuerpo or (c in encabezado and c not in en_todos_los_encabezados) for c in claves
+        )
     por_palabra = sorted((i for i in coincidencias if coincidencias[i]), key=lambda i: -coincidencias[i])
     # Fusión de rankings recíproca (RRF): cada ranking da 1/(60 + lugar) puntos.
     # Quedar arriba en cualquiera de los dos ayuda; quedar arriba en ambos, más.
