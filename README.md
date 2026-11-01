@@ -98,9 +98,9 @@ I wrote a set of 16 questions (`preguntas_evaluacion.json`) and a script (`evalu
 The first version of the evaluation had 10 questions and 9 passed. The failure was "Do you do catering for events?".
 
 - **Symptom.** Claude listed the breakfast package, venue rental, and deposit, but missed the office coffee package ($380).
-- **Diagnosis.** That chunk was ranked 8th, outside the top 5, so Claude never saw it. By meaning it ranked 7th. By keyword it scored zero, because it says "café" and "termo" and never uses "catering" or "events". Three other chunks scored in both rankings or matched a keyword, and pushed it down.
+- **Diagnosis.** That chunk was ranked 8th, outside the top 5, so Claude never saw it. By meaning it ranked 7th. By keyword it scored zero, because it says "café" and "termo" and never uses "catering" or "events". Even by meaning alone it ranked 7th, and three chunks that matched the question’s keywords were placed above it.
 - **Fix.** The keyword search now also counts the `[file — title]` header, so "catering" matches every chunk of the events document. Words that appear in the header of every chunk (the business name) are ignored, because otherwise "café" would match all 15 chunks.
-- **Result.** The office coffee package moved from 8th to 4th place. Before changing anything I added 6 new questions as a control (americano price, Sundays, reserving a table, loyalty card, parking, a branch in another city). They already passed, so they do not show improvement, but they confirm the fix did not break them. Final result: 16/16 on answers and on retrieval, and no question got worse. Only the ranking order of the catering questions and one promotion question changed.
+- **Result.** The office coffee package moved from 8th to 4th place. Before changing anything I added 6 new questions as a control (americano price, Sundays, reserving a table, loyalty card, parking, a branch in another city). They already passed, so they do not show improvement, but they confirm the fix did not break them. Final result: 16/16 on answers and on retrieval, and no question got worse. Among the expected chunks, positions changed only for the catering question and one promotion question (from 2nd to 1st place).
 
 With 16/16 this test is now at its ceiling and can no longer tell improvements apart. A harder test set is the next step.
 
@@ -113,7 +113,7 @@ Limitations:
 - Not production-ready. It is a portfolio project: no persistent per-user storage, minimal error handling, and the usage counter lives in memory and resets on restart.
 - Each question is independent; the chat history is not used.
 - The keyword search reads every chunk on each question and does no stemming ("latte" does not match "lattes"). That is fine for a few documents; with thousands it would need a proper index such as BM25.
-- A public demo is paused. Free hosting tiers did not fit this app, and I decided to wait until there is a real use case to pay for hosting.
+- A public demo is paused. Hugging Face’s free plan does not currently allow creating a standard (CPU) Gradio Space (checked October 2026), so I decided to wait until there is a real use case to pay for hosting.
 
 Next steps:
 
